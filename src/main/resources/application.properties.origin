@@ -1,0 +1,27 @@
+##work
+bot.name=
+bot.token=
+
+service.file_info.uri=https://api.telegram.org/bot{token}/getFile?file_id={fileId}
+service.file_storage.uri=https://api.telegram.org/file/bot{token}/{filePath}
+
+##Declare chatId of the bot owner, if there are more then 1 owner, write write the id of all admins separated by commas
+owners=
+server.port=
+
+bot.uri=https://47cc-37-215-42-44.eu.ngrok.io
+
+#connection
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+
+#DB config
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.show_sql=true
+spring.jpa.hibernate.ddl-auto=update
+
+spring.task.scheduling.pool.size=3
+
+logging.level.root=INFO
