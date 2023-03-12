@@ -10,19 +10,18 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 @Component
 @Slf4j
-public class CountersUtil {
+public class CountersUtils {
     private final UserService userService;
     public static int dayOfWeek;
     private final TelegramBot telegramBot;
 
 
-    public CountersUtil(UserService userService, TelegramBot telegramBot) {
+    public CountersUtils(UserService userService, TelegramBot telegramBot) {
         this.userService = userService;
         this.telegramBot = telegramBot;
     }

@@ -10,6 +10,7 @@ import com.example.YourMagicArtBot.services.implementations.UserService;
 import com.example.YourMagicArtBot.util.AdminValidator;
 import com.example.YourMagicArtBot.util.MessageUtils;
 import com.example.YourMagicArtBot.util.RateLimiter;
+import com.example.YourMagicArtBot.util.VideoUtils;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -34,13 +35,15 @@ public class UpdateController {
     private final MessageUtils messageUtils;
     private final CardServiceImpl cardService;
     private final UniversePredictionService universePredictionService;
+    private final VideoUtils videoUtils;
 
-    public UpdateController(UserService userService, AdminValidator adminValidator, MessageUtils messageUtils, CardServiceImpl cardService, UniversePredictionService universePredictionService) {
+    public UpdateController(UserService userService, AdminValidator adminValidator, MessageUtils messageUtils, CardServiceImpl cardService, UniversePredictionService universePredictionService, VideoUtils videoUtils) {
         this.userService = userService;
         this.adminValidator = adminValidator;
         this.messageUtils = messageUtils;
         this.cardService = cardService;
         this.universePredictionService = universePredictionService;
+        this.videoUtils = videoUtils;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -66,7 +69,6 @@ public class UpdateController {
         }
         if (!RateLimiter.isRequestAllowed(String.valueOf(update.getMessage().getChatId()))) {
             log.warn("User " + update.getMessage().getChat().getFirstName() + " with chatId: " + update.getMessage().getChatId() + " is spamming!");
-            return;
         } else {
             processMessage(update);
         }
@@ -85,7 +87,9 @@ public class UpdateController {
         } else if (update.getMessage().hasPhoto()) {
             processPhotoMessage(update);
         } else if (update.getMessage().hasVideo()) {
-            universePresentRequestReceived(update);
+            if(adminValidator.isOwner(update.getMessage().getChatId())) {
+                log.info("Video with fileId: " + update.getMessage().getVideo().getFileId() + " was received");
+            }
         }
     }
 
@@ -163,14 +167,7 @@ public class UpdateController {
     }
 
     private void universePresentRequestReceived(Update update) {
-        String chatId = String.valueOf(update.getMessage().getChatId());
-        SendVideo sendVideo = new SendVideo(chatId, new InputFile("BAACAgIAAxkBAAIHeWPaun3UfzpFaem4s4DU5PBllID0AAInKQACJiTYSpJOK6hUG2vlLgQ"));
-        sendVideo.setCaption(messageUtils.UNIVERSE_PRESENT);
-        try {
-            telegramBot.execute(sendVideo);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
+        executeVideo(videoUtils.getInfoVideo(update));
     }
 
     private void mailingRequestReceived(Update update) {
@@ -322,20 +319,23 @@ public class UpdateController {
         }
     }
 
+    private void executeVideo(SendVideo sendVideo){
+        try {
+            telegramBot.execute(sendVideo);
+        } catch (TelegramApiException e) {
+            log.error("exception while video sending" + e.getMessage());
+        }
+    }
+
     private void registerUser(Update update) {
         Message message = update.getMessage();
         if (userService.findUserById(message.getChatId()).isEmpty()) {
             userService.saveUser(message);
-            SendVideo sendVideo = new SendVideo();
+
             setMainKeyboardAndExecute(messageUtils.
                     generateSendMessage(update, messageUtils.getHelpMessage(update.getMessage().getChat().getFirstName())));
-            sendVideo.setChatId(message.getChatId());
-            sendVideo.setVideo(new InputFile("BAACAgIAAxkBAAM4Y9PwCO_ECPLVO6lLXnaLhCU-8DQAAtQmAALDkWFKxfy0ggN34C4tBA"));
-            try {
-                telegramBot.execute(sendVideo);
-            } catch (TelegramApiException e) {
-                log.error("exception while video sending" + e.getMessage());
-            }
+
+            executeVideo(videoUtils.getWelcomeVideo(update));
         } else {
             setMainKeyboardAndExecute(messageUtils.
                     generateSendMessage(update, EmojiParser.

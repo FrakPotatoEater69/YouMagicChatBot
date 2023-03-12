@@ -3,7 +3,7 @@ package com.example.YourMagicArtBot.services.implementations;
 import com.example.YourMagicArtBot.models.UniversePrediction;
 import com.example.YourMagicArtBot.models.User;
 import com.example.YourMagicArtBot.repositories.UniversePredictionRepository;
-import com.example.YourMagicArtBot.util.CountersUtil;
+import com.example.YourMagicArtBot.util.CountersUtils;
 import com.example.YourMagicArtBot.util.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,7 +56,7 @@ public class UniversePredictionService {
         if (optionalUser.isEmpty())
             return new SendMessage(chatId, "Вселенная тебя не узнаёт, отправь команду /start");
 
-        if (CountersUtil.dayOfWeek == Calendar.THURSDAY) {
+        if (CountersUtils.dayOfWeek == Calendar.THURSDAY) {
             User user = optionalUser.get();
 
             if (user.getUniversePredictionCounter() == 0) {
@@ -77,7 +77,7 @@ public class UniversePredictionService {
 
     public EditMessageText getEditedMessageWithPrediction(Update update) {
         EditMessageText message = new EditMessageText();
-        if (CountersUtil.dayOfWeek == Calendar.THURSDAY) {
+        if (CountersUtils.dayOfWeek == Calendar.THURSDAY) {
             String randomPrediction = getRandomPrediction().getDescription();
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
 
