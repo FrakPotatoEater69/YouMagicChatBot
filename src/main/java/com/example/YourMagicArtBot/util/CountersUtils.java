@@ -2,7 +2,7 @@ package com.example.YourMagicArtBot.util;
 
 import com.example.YourMagicArtBot.controllers.TelegramBot;
 import com.example.YourMagicArtBot.models.User;
-import com.example.YourMagicArtBot.services.implementations.UserService;
+import com.example.YourMagicArtBot.services.UserService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

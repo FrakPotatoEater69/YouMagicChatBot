@@ -1,4 +1,4 @@
-package com.example.YourMagicArtBot.services.implementations;
+package com.example.YourMagicArtBot.services;
 
 import com.example.YourMagicArtBot.exceptions.IdNotFoundException;
 import com.example.YourMagicArtBot.models.User;

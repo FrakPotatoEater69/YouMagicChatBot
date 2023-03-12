@@ -1,4 +1,4 @@
-package com.example.YourMagicArtBot.services.implementations;
+package com.example.YourMagicArtBot.services;
 
 import com.example.YourMagicArtBot.models.UniversePrediction;
 import com.example.YourMagicArtBot.models.User;
