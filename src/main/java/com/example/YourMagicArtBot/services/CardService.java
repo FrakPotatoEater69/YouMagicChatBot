@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-public class CardServiceImpl {
+public class CardService {
     @Value("${bot.token}")
     private String token;
 
@@ -39,7 +39,7 @@ public class CardServiceImpl {
     private final Random random = new Random();
 
 
-    public CardServiceImpl(CardRepository cardRepository) {
+    public CardService(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
     }
 

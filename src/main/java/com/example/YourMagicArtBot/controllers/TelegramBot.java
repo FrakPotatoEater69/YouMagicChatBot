@@ -43,6 +43,7 @@ public class TelegramBot extends TelegramWebhookBot {
     @PostConstruct
     private void init() {
         this.updateController.registerBot(this);
+        this.updateController.telegramApiService.init(this);
         try {
             var setWebhook = SetWebhook.builder().url(config.getBotUri()).build();
             this.setWebhook(setWebhook);

@@ -17,40 +17,28 @@ import java.util.List;
 @Component
 public class MessageUtils {
 
-    public static final String HELP = EmojiParser.parseToUnicode("Вселенная добра и позволяет узнать тебе твоё будущее через сакральные карты. :stars:\n" +
+    public static final String HELP = EmojiParser.parseToUnicode("The universe is kind and allows you to know your future through sacred cards. :stars:\n" +
             "\n" +
-            "Раз в день, но не больше трёх дней в неделю, 3 попытки обновляются каждое воскресенье.\n" +
+            "Once a day, but no more than 3 days a week, 3 attempts are refreshed every Sunday.\n" +
             "\n" +
-            "Каждый четверг Вселенная готова ответить на один абсолютно любой твой вопрос.:milky_way:\n" +
-            "Так же не забудь получить свой подарок от Вселенной!");
+            "Every Thursday the Universe is ready to answer one absolutely any question you have.:milky_way:\n" +
+            "Also don't forget to get your gift from the Universe!");
     public static final String UNIVERSE_GENERAL_INFO_OR_CLICK_NOT_THURSDAY = EmojiParser.parseToUnicode(
-            "Каждую неделю по четвергам ты сможешь получить ответы от вселенной:milky_way: на любой свой вопрос, а пока нужно просто ждать. \n" +
-                    "Она знает чего ты хочешь."
+            "Every week on Thursdays you can get answers from the universe :milky_way: to any question you have, but for now you just have to wait. \n" +
+                    "She knows what you want."
     );
-    public static final String CARD_NOT_FOUND = EmojiParser.parseToUnicode("Вселенная почему-то не нашла карт, непорядок...");
-    public static final String CONNECTION = EmojiParser.parseToUnicode("Соединение со Вселенной...:hourglass:");
+    public static final String CARD_NOT_FOUND = EmojiParser.parseToUnicode("For some reason, the Universe did not find the cards, a mess ...");
+    public static final String CONNECTION = EmojiParser.parseToUnicode("Connecting with the Universe...:hourglass:");
     public static final String OK = "OK";
     public static final String NOT_OK = "NOT OK";
-    public static final String USER_NOT_FOUND = "Нет пользователей в БД";
-    public static final String WAIT_AND_THINK = EmojiParser.parseToUnicode("Замедлись :pray:, осознай все предыдущие предсказания и приходи в воскресенье");
+    public static final String USER_NOT_FOUND = "No users in the database";
+    public static final String WAIT_AND_THINK = EmojiParser.parseToUnicode("Slow down :pray:, realize all the previous predictions and come on Sunday");
 
-    public static final String UNIVERSE_PRESENT = EmojiParser.parseToUnicode("Привет, рада что ты с нами.\n" +
-            "Я записала для тебя короткую практику, на высвобождение негативной энергии.\n" +
-            "Это техника потокового рисования, которая отлично работает в моменте. Если понравиться, переходи на мой ютюб, в этой папке собраны похожие практики на разные ситуации\n" +
-            "https://youtube.com/playlist?list=PL8I_kTo4KSLzdkNH10hPEI1dNj4-egteN\n" +
-            "https://youtube.com/playlist?list=PL8I_kTo4KSLzF6bKChOMvrfgP-yBodV0O\n" +
-            "\n" +
-            "Если тебе интересно познакомиться поближе с сакральной геометрией или пройти один из моих курсов ты можешь выбрать подходящий тут\n" +
-            "\n" +
-            "https://taplink.cc/polina.davi\n" +
-            "или написать мне в Инстаграме\n" +
-            "https://instagram.com/polina.davi?igshid=YmMyMTA2M2Y= \n" +
-            "на моем сайте ты найдешь подробную информацию обо мне и еще много интересного\n" +
-            "https://polinadavi.com/");
+    public static final String UNIVERSE_PRESENT = EmojiParser.parseToUnicode("Here you can insert ads");
     public static final String READY_BUTTON = "READY_BUTTON";
-    public static final String TODAY_IS_NOT_THURSDAY = "Слишком поздно, Вселенная отвечает на вопросы только по четвергам";
-    public static final String SUPPORT = EmojiParser.parseToUnicode("Если Вы нашли недоработки или ошибки в работе бота, пожалуйста, свяжитесь с разработчиком \uD83D\uDC68\u200D\uD83D\uDCBB - @pressure_sensor\n" +
-            "Бот оснащён антиспам системой по правилам телеграма и не будет отвечать чаще чем на 1 сообщение в секунду");
+    public static final String TODAY_IS_NOT_THURSDAY = "It's too late, the Universe only answers questions on Thursdays";
+    public static final String SUPPORT = EmojiParser.parseToUnicode("If you find flaws or errors in the bot, please contact the developer \uD83D\uDC68\u200D\uD83D\uDCBB - @pressure_sensor\n" +
+            "The bot is equipped with an anti-spam system according to the telegram rules and will not respond more than 1 message per second");
 
     public ReplyKeyboardMarkup getMainKeyboard() {
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
@@ -58,15 +46,15 @@ public class MessageUtils {
 
         KeyboardRow keyboardrow = new KeyboardRow();
 
-        keyboardrow.add("Получить предсказание");
-        keyboardrow.add("Ответы Вселенной");
+        keyboardrow.add("Get a prediction");
+        keyboardrow.add("Universe Answers");
 
         rows.add(keyboardrow);
 
         keyboardrow = new KeyboardRow();
 
-        keyboardrow.add("Информация");
-        keyboardrow.add("Подарок от Вселенной");
+        keyboardrow.add("Information");
+        keyboardrow.add("Gift from the Universe");
 
         rows.add(keyboardrow);
 
@@ -83,7 +71,7 @@ public class MessageUtils {
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
         InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText("Я готов");
+        button.setText("I'm ready");
         button.setCallbackData(READY_BUTTON);
 
         rowInLine.add(button);
@@ -93,8 +81,8 @@ public class MessageUtils {
         return inlineKeyboardMarkup;
     }
 
-    public static final String COME_TOMORROW = EmojiParser.parseToUnicode("Вселенная копит космическую энергию. \uD83E\uDD0C \n" +
-            "Приходи завтра");
+    public static final String COME_TOMORROW = EmojiParser.parseToUnicode("The universe is accumulating cosmic energy. \uD83E\uDD0C \n" +
+            "Come tomorrow");
 
     public SendMessage generateSendMessageByCard(Update update, Card card) {
         SendMessage sendMessage = new SendMessage();
@@ -113,22 +101,10 @@ public class MessageUtils {
     }
 
     public String getHelpMessage(String name) {
-        return EmojiParser.parseToUnicode("Привет, " + name + "!\n\n Я твой персональный магический бот.\n" +
-                "\n" +
-                "Меня создала художница и арт-терапевт Полина Дави.\n" +
-                "\n" +
-                "Я умею предсказывать ближайшее будущее с помощью сакральных символов, картин и метафорических карт\uD83D\uDD2E \n" +
-                "\n" +
-                "Хочешь получить первое предсказание? Жми кнопку Получить предсказание!");
+        return EmojiParser.parseToUnicode("Welcome message, here you can insert any text and any promotional video, but for example, I inserted a funny Polish video about a beaver");
     }
 
     public String getHelpMessageWithStartCommand(String name) {
-        return EmojiParser.parseToUnicode("Привет, " + name + "!\n\n Я твой персональный магический бот.\n" +
-                "\n" +
-                "Меня создала художница и арт-терапевт Полина Дави.\n" +
-                "\n" +
-                "Я умею предсказывать ближайшее будущее с помощью сакральных символов, картин и метафорических карт\uD83D\uDD2E \n" +
-                "\n" +
-                "Хочешь получить первое предсказание? Отправь /start");
+        return EmojiParser.parseToUnicode("Help Message /start");
     }
 }

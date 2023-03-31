@@ -25,3 +25,9 @@ spring.jpa.hibernate.ddl-auto=update
 spring.task.scheduling.pool.size=3
 
 logging.level.root=INFO
+
+#welcome video file id
+welcomeVideoFileId=
+
+#Info_Video fileId
+infoVideoFileId=

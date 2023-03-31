@@ -4,7 +4,8 @@ import com.example.YourMagicArtBot.exceptions.CardNotFoundException;
 import com.example.YourMagicArtBot.exceptions.IdNotFoundException;
 import com.example.YourMagicArtBot.models.Card;
 import com.example.YourMagicArtBot.models.User;
-import com.example.YourMagicArtBot.services.CardServiceImpl;
+import com.example.YourMagicArtBot.services.CardService;
+import com.example.YourMagicArtBot.services.TelegramApiService;
 import com.example.YourMagicArtBot.services.UniversePredictionService;
 import com.example.YourMagicArtBot.services.UserService;
 import com.example.YourMagicArtBot.util.AdminValidator;
@@ -16,12 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,17 +31,19 @@ public class UpdateController {
     private TelegramBot telegramBot;
     private final AdminValidator adminValidator;
     private final MessageUtils messageUtils;
-    private final CardServiceImpl cardService;
+    private final CardService cardService;
     private final UniversePredictionService universePredictionService;
     private final VideoUtils videoUtils;
+    final TelegramApiService telegramApiService;
 
-    public UpdateController(UserService userService, AdminValidator adminValidator, MessageUtils messageUtils, CardServiceImpl cardService, UniversePredictionService universePredictionService, VideoUtils videoUtils) {
+    public UpdateController(UserService userService, AdminValidator adminValidator, MessageUtils messageUtils, CardService cardService, UniversePredictionService universePredictionService, VideoUtils videoUtils, TelegramApiService telegramApiService) {
         this.userService = userService;
         this.adminValidator = adminValidator;
         this.messageUtils = messageUtils;
         this.cardService = cardService;
         this.universePredictionService = universePredictionService;
         this.videoUtils = videoUtils;
+        this.telegramApiService = telegramApiService;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -64,7 +64,7 @@ public class UpdateController {
             return;
         }
         if (!update.getMessage().isUserMessage()) {
-            log.warn("Bot get massage not from user chat");
+            log.error("Bot get massage not from user chat");
             return;
         }
         if (!RateLimiter.isRequestAllowed(String.valueOf(update.getMessage().getChatId()))) {
@@ -76,7 +76,7 @@ public class UpdateController {
 
     private void processCallBackQuery(Update update) {
         switch (update.getCallbackQuery().getData()) {
-            case ("READY_BUTTON") -> executeMessage(universePredictionService.
+            case ("READY_BUTTON") -> telegramApiService.executeMessage(universePredictionService.
                     getEditedMessageWithPrediction(update));
         }
     }
@@ -87,14 +87,14 @@ public class UpdateController {
         } else if (update.getMessage().hasPhoto()) {
             processPhotoMessage(update);
         } else if (update.getMessage().hasVideo()) {
-            if(adminValidator.isOwner(update.getMessage().getChatId())) {
+            if (adminValidator.isOwner(update.getMessage().getChatId())) {
                 log.info("Video with fileId: " + update.getMessage().getVideo().getFileId() + " was received");
             }
         }
     }
 
     private void unsupportedMessageReceived(Update update) {
-        setMainKeyboardAndExecute(messageUtils.
+        telegramApiService.setMainKeyboardAndExecute(messageUtils.
                 generateSendMessage(update, "Воспользуйся меню или введи команду /help"));
     }
 
@@ -106,11 +106,11 @@ public class UpdateController {
                     return;
                 }
                 cardService.processPhoto(update.getMessage());
-                setMainKeyboardAndExecute(messageUtils.
-                        generateSendMessage(update, "Карта успешно добавлена!"));
+                telegramApiService.setMainKeyboardAndExecute(messageUtils.
+                        generateSendMessage(update, "Card added successfully!"));
             } else {
-                setMainKeyboardAndExecute(messageUtils.
-                        generateSendMessage(update, "Чтобы добавить новую карту, пожалуйста, отправьте одним сообщением изображение и подпись (описание)"));
+                telegramApiService.setMainKeyboardAndExecute(messageUtils.
+                        generateSendMessage(update, "To add a new card, please send an image and a caption (description) in one message"));
             }
         } else {
             unsupportedMessageReceived(update);
@@ -132,11 +132,11 @@ public class UpdateController {
 
         for (User user : userList) {
             sendPhoto.setChatId(user.getChatId());
-            executePhoto(sendPhoto);
+            telegramApiService.executePhoto(sendPhoto);
             counter++;
         }
 
-        setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, "OK, " + counter + " users received photo"));
+        telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, "OK, " + counter + " users received photo"));
         log.info("Mailing PhotoMessage end");
     }
 
@@ -148,10 +148,10 @@ public class UpdateController {
             mailingRequestReceived(update);
         } else {
             switch (messageTest) {
-                case "Получить предсказание" -> dailyPredictionRequestReceived(update);
-                case "Ответы Вселенной" -> universePredictionRequestReceived(update);
-                case "Информация" -> infoRequestReceived(update);
-                case "Подарок от Вселенной" -> universePresentRequestReceived(update);
+                case "Get a prediction" -> dailyPredictionRequestReceived(update);
+                case "Universe Answers" -> universePredictionRequestReceived(update);
+                case "Information" -> infoRequestReceived(update);
+                case "Gift from the Universe" -> universePresentRequestReceived(update);
                 case "/start" -> registerUser(update);
                 case "/help" -> helpRequestReceived(update);
                 case "/deleteLastCard" -> deleteLastCardRequestReceived(update);
@@ -163,11 +163,11 @@ public class UpdateController {
     }
 
     private void supportRequestReceived(Update update) {
-        setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, messageUtils.SUPPORT));
+        telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, messageUtils.SUPPORT));
     }
 
     private void universePresentRequestReceived(Update update) {
-        executeVideo(videoUtils.getInfoVideo(update));
+        telegramApiService.executeVideo(videoUtils.getInfoVideo(update));
     }
 
     private void mailingRequestReceived(Update update) {
@@ -178,12 +178,12 @@ public class UpdateController {
             try {
                 userList = userService.findAllUser();
             } catch (IdNotFoundException e) {
-                setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, messageUtils.USER_NOT_FOUND));
+                telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, messageUtils.USER_NOT_FOUND));
                 return;
             }
 
             int counter = doMassMailingAndCountIt(userList, mailingText);
-            setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, messageUtils.OK + " " + counter));
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, messageUtils.OK + " " + counter));
             return;
         }
         unsupportedMessageReceived(update);
@@ -195,12 +195,12 @@ public class UpdateController {
         if (mailingText.contains("{NAME}")) {
             for (User user : userList) {
                 String personalMailingText = mailingText.replace("{NAME}", user.getFirstName());
-                setMainKeyboardAndExecute(new SendMessage(String.valueOf(user.getChatId()), personalMailingText));
+                telegramApiService.setMainKeyboardAndExecute(new SendMessage(String.valueOf(user.getChatId()), personalMailingText));
                 counter++;
             }
         } else {
             for (User user : userList) {
-                setMainKeyboardAndExecute(new SendMessage(String.valueOf(user.getChatId()), mailingText));
+                telegramApiService.setMainKeyboardAndExecute(new SendMessage(String.valueOf(user.getChatId()), mailingText));
                 counter++;
             }
         }
@@ -213,12 +213,12 @@ public class UpdateController {
             try {
                 cardService.deleteLastAddedCard();
             } catch (CardNotFoundException e) {
-                log.error("Попытка удалить карту с пустой бд" + e.getMessage());
-                setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.NOT_OK));
+                log.error("Trying to remove a map from an empty database" + e.getMessage());
+                telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.NOT_OK));
                 return;
             }
 
-            setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.OK));
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.OK));
         } else
             unsupportedMessageReceived(update);
     }
@@ -228,17 +228,17 @@ public class UpdateController {
     }
 
     private void infoRequestReceived(Update update) {
-        setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.HELP));
+        telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.HELP));
     }
 
     private void universePredictionRequestReceived(Update update) {
-        executeMessage(universePredictionService.processRequest(update.getMessage()));
+        telegramApiService.executeMessage(universePredictionService.processRequest(update.getMessage()));
     }
 
     private void newUniversePredictionReceived(Update update) {
         if (adminValidator.isOwner(update.getMessage().getChatId())) {
             universePredictionService.savePrediction(update.getMessage().getText());
-            setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.OK));
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.OK));
         }
 
         unsupportedMessageReceived(update);
@@ -247,13 +247,13 @@ public class UpdateController {
     private void dailyPredictionRequestReceived(Update update) {
         Optional<User> optionalUser = userService.findUserById(update.getMessage().getChatId());
         if (optionalUser.isEmpty()) {
-            setMainKeyboardAndExecute(messageUtils.generateSendMessage(update,
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update,
                     messageUtils.getHelpMessageWithStartCommand(update.getMessage().getChat().getFirstName())));
         } else if (optionalUser.get().getWeeklyCounter() >= 3) {
-            setMainKeyboardAndExecute(messageUtils.generateSendMessage(update,
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update,
                     messageUtils.WAIT_AND_THINK));
         } else if (optionalUser.get().getDailyCounter() == 1) {
-            setMainKeyboardAndExecute(messageUtils.generateSendMessage(update,
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update,
                     messageUtils.COME_TOMORROW));
         } else {
             sendRandomPrediction(update, optionalUser);
@@ -263,14 +263,14 @@ public class UpdateController {
     private void sendRandomPrediction(Update update, Optional<User> optionalUser) {
         User user = optionalUser.get();
 
-        setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.CONNECTION));
+        telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.CONNECTION));
 
         Card randomCard = null;
         try {
             randomCard = cardService.getRandomCard();
         } catch (CardNotFoundException e) {
             log.error("Random card not found" + e.getMessage());
-            setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.CARD_NOT_FOUND));
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessage(update, MessageUtils.CARD_NOT_FOUND));
             return;
         }
 
@@ -278,53 +278,8 @@ public class UpdateController {
         user.setWeeklyCounter(user.getWeeklyCounter() + 1);
         userService.saveUser(user);
 
-        sendPhotoToUser(cardService.generateSendPhotoByCard(update, randomCard));
-        setMainKeyboardAndExecute(messageUtils.generateSendMessageByCard(update, randomCard));
-    }
-
-    private void sendPhotoToUser(SendPhoto sendPhoto) {
-        try {
-            telegramBot.execute(sendPhoto);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void setMainKeyboardAndExecute(SendMessage sendMessage) {
-        sendMessage.setReplyMarkup(messageUtils.getMainKeyboard());
-        executeMessage(sendMessage);
-    }
-
-    private void executeMessage(SendMessage sendMessage) {
-        try {
-            telegramBot.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            log.error("Error while sending message to user with chatId: " + sendMessage.getChatId() + " cause: " + e.getMessage());
-        }
-    }
-
-    private void executeMessage(EditMessageText editMessageText) {
-        try {
-            telegramBot.execute(editMessageText);
-        } catch (TelegramApiException e) {
-            log.error("Error while sending message to user with chatId: " + editMessageText.getChatId() + " cause: " + e.getMessage());
-        }
-    }
-
-    private void executePhoto(SendPhoto sendPhoto) {
-        try {
-            telegramBot.execute(sendPhoto);
-        } catch (TelegramApiException e) {
-            log.error("Error while sending photo message to user with chatId: " + sendPhoto.getChatId() + " cause: " + e.getMessage());
-        }
-    }
-
-    private void executeVideo(SendVideo sendVideo){
-        try {
-            telegramBot.execute(sendVideo);
-        } catch (TelegramApiException e) {
-            log.error("exception while video sending" + e.getMessage());
-        }
+        telegramApiService.sendPhotoToUser(cardService.generateSendPhotoByCard(update, randomCard));
+        telegramApiService.setMainKeyboardAndExecute(messageUtils.generateSendMessageByCard(update, randomCard));
     }
 
     private void registerUser(Update update) {
@@ -332,14 +287,14 @@ public class UpdateController {
         if (userService.findUserById(message.getChatId()).isEmpty()) {
             userService.saveUser(message);
 
-            setMainKeyboardAndExecute(messageUtils.
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.
                     generateSendMessage(update, messageUtils.getHelpMessage(update.getMessage().getChat().getFirstName())));
 
-            executeVideo(videoUtils.getWelcomeVideo(update));
+            telegramApiService.executeVideo(videoUtils.getWelcomeVideo(update));
         } else {
-            setMainKeyboardAndExecute(messageUtils.
+            telegramApiService.setMainKeyboardAndExecute(messageUtils.
                     generateSendMessage(update, EmojiParser.
-                            parseToUnicode("Нет нужды, Вселенная всё помнит! :dizzy:")));
+                            parseToUnicode("There is no need, the Universe remembers everything! :dizzy:")));
         }
     }
 
