@@ -40,6 +40,8 @@ public class MessageUtils {
     public static final String SUPPORT = EmojiParser.parseToUnicode("If you find flaws or errors in the bot, please contact the developer \uD83D\uDC68\u200D\uD83D\uDCBB - @pressure_sensor\n" +
             "The bot is equipped with an anti-spam system according to the telegram rules and will not respond more than 1 message per second");
 
+    public static final String UNSUPPORTED_MESSAGE_TEXT = EmojiParser.parseToUnicode("Use the menu or enter the /help command");
+
     public ReplyKeyboardMarkup getMainKeyboard() {
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
         List<KeyboardRow> rows = new ArrayList<>();

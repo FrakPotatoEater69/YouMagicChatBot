@@ -93,8 +93,7 @@ public class CountersUtils {
             try {
                 log.info("Sending reminders to: " + user.getUserName());
                 SendMessage sendMessage = new SendMessage(String.valueOf(user.getChatId()),
-                        "Сегодня тот самый день, когда Вселенная готова ответить на твой вопрос.\n" +
-                                "Задай себе вопрос и нажми на кнопку Ответы вселенной");
+                        "Today is the day the universe is ready to answer your question.\nAsk yourself a question and press the Answers of the Universe button");
                 telegramBot.execute(sendMessage);
             } catch (TelegramApiException e) {
                 log.error("Error while sending reminders to: " + user.getUserName() + " with chatId: " + user.getChatId() + " cause: " + e.getMessage());

@@ -95,7 +95,7 @@ public class UpdateController {
 
     private void unsupportedMessageReceived(Update update) {
         telegramApiService.setMainKeyboardAndExecute(messageUtils.
-                generateSendMessage(update, "Воспользуйся меню или введи команду /help"));
+                generateSendMessage(update, messageUtils.UNSUPPORTED_MESSAGE_TEXT));
     }
 
     private void processPhotoMessage(Update update) {

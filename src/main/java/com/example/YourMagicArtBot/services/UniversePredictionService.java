@@ -54,21 +54,20 @@ public class UniversePredictionService {
         Optional<User> optionalUser = userService.findUserById(message.getChatId());
 
         if (optionalUser.isEmpty())
-            return new SendMessage(chatId, "Вселенная тебя не узнаёт, отправь команду /start");
+            return new SendMessage(chatId, "The Universe doesn't recognize you, send the /start command");
 
         if (CountersUtils.dayOfWeek == Calendar.THURSDAY) {
             User user = optionalUser.get();
 
             if (user.getUniversePredictionCounter() == 0) {
 
-                SendMessage sendMessage = new SendMessage(chatId, "Задай себе вопрос, на который хочешь услышать ответ Вселенной");
+                SendMessage sendMessage = new SendMessage(chatId, "Ask yourself a question and press and press \"I'm ready\"");
 
                 sendMessage.setReplyMarkup(messageUtils.getUniversePredictionKeyboard());
 
                 return sendMessage;
             } else {
-                return new SendMessage(chatId, "Ты уже получили ответ на твой вопрос на этой неделе.\n" +
-                        "Задай свой вопрос в следующий четверг");
+                return new SendMessage(chatId, "You already got your question answered this week.\n" + "Ask your question next Thursday");
             }
         }
 
