@@ -9,36 +9,37 @@ Please note that this bot is a copy of my commercial bot that is currently in ac
 #### Daily divination includes random sacred card and prediction
 
 
-![](https://od.lk/s/NDZfMzY0OTI0Njhf/get.jpg)
+![get.jpg](screenshots/get.jpg)
 
 If you already spent a try today
 
-![](https://od.lk/s/NDZfMzcxMTAzODRf/Screenshot_2.png)
+![Screenshot_2.png](screenshots/Screenshot_2.png)
 
 If you spent 3 weekly attempts
 
-![](https://od.lk/s/NDZfMzcxMTAxODBf/Screenshot_1.png)
+![Screenshot_1.png](screenshots/Screenshot_1.png)
 
 To add a new prediction with a sacred card, you need to be an admin and simply send a picture with a description to the bot.
 If everything is added successfully, the bot will notify you about it.
 
-![](https://od.lk/s/NDZfMzcxMTA2Mzhf/Screenshot_3.png)
+
+![Screenshot_3.png](screenshots/Screenshot_3.png)
 
 If you are not an admin, the bot will reply that the command is not recognized.
 
-![](https://od.lk/s/NDZfMzcxMTA5NTZf/Screenshot_4.png)
+![Screenshot_4.png](screenshots/Screenshot_4.png)
 
 If you forget to send a text with a picture, the bot will also write to you about it.
 If you accidentally sent a picture with a worng description to the bot, or made a mistake in the description - use the /deleteLastCard command, it will delete the last card with a prediction
 
 Sending card with no caption    |   deleting the previous card using the /deleteLastCard command
 :-------------------------:|:-------------------------:
-![](https://od.lk/s/NDZfMzcxMTEyNzVf/Screenshot_5.png)|![](https://od.lk/s/NDZfMzcxMTEyODRf/Screenshot_6.png)
+![Screenshot_5.png](screenshots/Screenshot_5.png)|![Screenshot_6.png](screenshots/Screenshot_6.png)
 
 To let the bot know that you are an admin, just add your chatId to the line owners of the application.properties file, separated with coma and space.
 
 Example:
-![](https://od.lk/s/NDZfMzcxMTEzNDBf/Screenshot_7.png)
+![Screenshot_7.png](screenshots/Screenshot_7.png)
 
 I also want to note that the bot sends everyone a notification about updating attempts on Sunday.
 
@@ -49,24 +50,24 @@ If the user spent their attempt before, he won't get the reminder.
 If you put this button not on Thursday:
 
 Example:
-![](https://od.lk/s/NDZfMzcxMTQyNzhf/Screenshot_15.png)
+![Screenshot_15.png](screenshots/Screenshot_15.png)
 
 If you put this button on Thursday:
-![](https://od.lk/s/NDZfMzcxMTQyNzVf/Screenshot_12.png)
+![Screenshot_12.png](screenshots/Screenshot_12.png)
 
 After pressing the "I'm ready" button, the message changes to a prediction.
 #### Prediction can be added with the /sendUniverse TEXT command.
 
 Example:
-![](https://od.lk/s/NDZfMzcxMTQyNzdf/Screenshot_14.png)
+![Screenshot_14.png](screenshots/Screenshot_14.png)
 
 If you press the "I'm ready" button after Thursday, the bot will write that it's too late.
 
 Example:
-![](https://od.lk/s/NDZfMzcxMTQyNzZf/Screenshot_13.png)
+![Screenshot_13.png](screenshots/Screenshot_13.png)
 
 If you try to get the second answer of the Universe in one Thursday:
-![](https://od.lk/s/NDZfMzcxMTQzOTBf/Screenshot_19.png)
+![Screenshot_19.png](screenshots/Screenshot_19.png)
 
 
 In the future I plan to integrate ChatGPT here.
@@ -79,7 +80,7 @@ The message that the user is spamming will be displayed in the logs along with h
 Example:
 Spamming   |   Results in logs
 :-------------------------:|:-------------------------:
-![](https://od.lk/s/NDZfMzcxMTI1ODNf/Screenshot_9.png)|![](https://od.lk/s/NDZfMzcxMTI1ODRf/Screenshot_10.png)
+![Screenshot_9.png](screenshots/Screenshot_9.png)|![Screenshot_10.png](screenshots/Screenshot_10.png)
 
 The anti-spam system is implemented using the cache pattern, I also had the idea to use Redis, because it is a fast key-value database. But in order to save money, I chose the cache to implement the anti-spam system.
 
@@ -96,7 +97,7 @@ Also, after any type of mailing, the number of users who received the message co
 Example:
 Admin do mailing |   User get it
 :-------------------------:|:-------------------------:
-![](https://od.lk/s/NDZfMzcxMTQzNzNf/Screenshot_16.png)|![](https://od.lk/s/NDZfMzcxMTQzNzRf/Screenshot_17.png)
+![Screenshot_16.png](screenshots/Screenshot_16.png)|![Screenshot_17.png](screenshots/Screenshot_17.png)
 
 ### Сonclusion
 
